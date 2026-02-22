@@ -43,7 +43,7 @@ export default function SignUpPage() {
        {/* Brand */}
        <div className="flex flex-col items-center mb-6">
          <div className="bg-teal-500 text-white p-4 rounded-xl shadow-md mb-3">
-          <Pill />
+           <Pill />
          </div>
 
          <h1 className="text-2xl font-bold text-gray-900">
@@ -66,7 +66,7 @@ export default function SignUpPage() {
            type="email"
            placeholder="you@example.com"
            onChange={(e) => setEmail(e.target.value)}
-           className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+           className="w-full border border-gray-200 text-black rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
          />
        </div>
 
@@ -85,7 +85,7 @@ export default function SignUpPage() {
        <button
          onClick={handleSignUp}
          disabled={loading}
-         className="w-full bg-teal-600 text-white font-semibold py-2.5 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] transi3tion disabled:opacity-50"
+         className="w-full bg-teal-600 text-white font-semibold py-2.5 rounded-lg shadow-md hover:shadow-lg hover:scale-[1.01] transition disabled:opacity-50"
        >
          {loading ? "Creating account..." : "Sign Up"}
        </button>
