@@ -134,18 +134,18 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
 
       {/* ── Summary Stats ── */}
       {medications.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 mb-5">
-          <div className="bg-white border border-gray-100 rounded-2xl p-4 text-center shadow-sm">
-            <p className="text-2xl font-bold text-green-600">{takenCount}</p>
-            <p className="text-xs text-gray-400 mt-1">Taken</p>
+        <div className="grid grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-5">
+          <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
+            <p className="text-xl md:text-2xl font-bold text-green-600">{takenCount}</p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Taken</p>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-4 text-center shadow-sm">
-            <p className="text-2xl font-bold text-red-500">{missedCount}</p>
-            <p className="text-xs text-gray-400 mt-1">Missed</p>
+          <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
+            <p className="text-xl md:text-2xl font-bold text-red-500">{missedCount}</p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Missed</p>
           </div>
-          <div className="bg-white border border-gray-100 rounded-2xl p-4 text-center shadow-sm">
-            <p className="text-2xl font-bold text-amber-500">{pendingCount}</p>
-            <p className="text-xs text-gray-400 mt-1">Pending</p>
+          <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
+            <p className="text-xl md:text-2xl font-bold text-amber-500">{pendingCount}</p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Pending</p>
           </div>
         </div>
       )}

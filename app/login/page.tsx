@@ -52,16 +52,15 @@ export default function LoginPage() {
     setErrors({});
 
     const result = loginSchema.safeParse(formData);
-
-    if (!result.success) {
-      const fieldErrors: Partial<LoginFormData> = {};
-      result.error.issues.forEach((err) => {
-        const field = err.path[0] as keyof LoginFormData;
-        fieldErrors[field] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
+if (!result.success) {
+  const fieldErrors: Partial<LoginFormData> = {};
+  result.error.issues.forEach((issue) => {
+    const field = issue.path[0] as keyof LoginFormData;
+    fieldErrors[field] = issue.message;
+  });
+  setErrors(fieldErrors);
+  return;
+}
 
     try {
       setLoading(true);

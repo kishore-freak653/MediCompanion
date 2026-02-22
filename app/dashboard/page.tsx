@@ -190,8 +190,8 @@ export default function Dashboard() {
       }`}
     >
       {/* ── Sidebar ── */}
-      {/* ✅ KEY FIX: removed `fixed`, use normal flex child. h-screen keeps it full height. */}
-      <aside className="w-[68px] h-screen bg-[#0d2136] flex flex-col items-center py-6 flex-shrink-0">
+      {/* ✅ Mobile: Hidden, replaced with bottom nav */}
+      <aside className="hidden md:flex w-[68px] h-screen bg-[#0d2136] flex-col items-center py-6 flex-shrink-0">
         {/* Logo */}
         <div className="w-10 h-10 bg-gradient-to-br from-[#157a65] to-[#1da98e] rounded-[13px] flex items-center justify-center text-white mb-7 shadow-[0_4px_18px_rgba(21,122,101,0.45)]">
           <Heart size={18} strokeWidth={2.5} />
@@ -288,8 +288,8 @@ export default function Dashboard() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <span className="text-[15px] font-semibold text-[#0d2136] tracking-tighter opacity-55 tabular-nums">
+          <div className="flex items-center gap-2 md:gap-3.5 w-full md:w-auto justify-between md:justify-end">
+            <span className="text-sm md:text-[15px] font-semibold text-[#0d2136] tracking-tighter opacity-55 tabular-nums">
               {currentTime.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -319,7 +319,7 @@ export default function Dashboard() {
         </header>
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 px-9 pt-5 text-xs text-[#7a8a99] font-medium">
+        <div className="flex items-center gap-1.5 px-4 md:px-9 pt-3 md:pt-5 text-xs text-[#7a8a99] font-medium">
           <span>Dashboard</span>
           <ChevronRight size={13} />
           <span
@@ -341,7 +341,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats strip */}
-        <div className="flex gap-3.5 px-9 pt-7 flex-wrap">
+        <div className="flex gap-2 md:gap-3.5 px-4 md:px-9 pt-4 md:pt-7 flex-wrap">
           {statsStripConfig(loading, medications, takenIds).map((item) => (
             <StatCard
               key={item.label}
@@ -354,8 +354,8 @@ export default function Dashboard() {
 
         {/* Tabs Navigation */}
         {view === "patient" && (
-          <div className="px-9 pt-5">
-            <div className="flex gap-2 border-b border-[#e6e1d9]">
+          <div className="px-4 md:px-9 pt-3 md:pt-5">
+            <div className="flex gap-1 md:gap-2 border-b border-[#e6e1d9] overflow-x-auto">
               {[
                 { id: "today", label: "Today" },
                 { id: "schedule", label: "Schedule" },
@@ -380,8 +380,8 @@ export default function Dashboard() {
         )}
 
         {/* Content */}
-        <div className="px-9 py-5 pb-10 flex-1">
-          <div className="bg-gradient-to-b from-white to-[#fbfaf7] border border-[#ede9e2] rounded-[22px] shadow-[0_10px_30px_rgba(13,33,54,0.06)] min-h-[420px] overflow-hidden p-6">
+        <div className="px-4 md:px-9 py-3 md:py-5 pb-20 md:pb-10 flex-1">
+          <div className="bg-gradient-to-b from-white to-[#fbfaf7] border border-[#ede9e2] rounded-xl md:rounded-[22px] shadow-[0_10px_30px_rgba(13,33,54,0.06)] min-h-[420px] overflow-hidden p-4 md:p-6">
             <ErrorBoundary>
               {view === "caretaker" ? (
                 <CareTaker
@@ -405,6 +405,45 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      {/* ── Mobile Bottom Navigation ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d2136] border-t border-[#1a3a55] flex items-center justify-around py-2 z-50 safe-area-inset-bottom">
+        {navItems.map(({ icon, label, active, tab: navTab }) => {
+          if (
+            view === "caretaker" &&
+            (navTab === "schedule" || navTab === "history")
+          ) {
+            return null;
+          }
+          return (
+            <button
+              key={label}
+              onClick={() => {
+                if (view === "patient") {
+                  router.push(`/dashboard?role=${view}&tab=${navTab}`);
+                } else {
+                  router.push(`/dashboard?role=${view}&tab=${navTab}`);
+                }
+              }}
+              className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
+                active
+                  ? "text-[#1da98e]"
+                  : "text-[#4a6a85]"
+              }`}
+            >
+              {icon}
+              <span className="text-[10px] font-medium">{label}</span>
+            </button>
+          );
+        })}
+        <button
+          onClick={handleSignOut}
+          className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-[#4a6a85] transition-all"
+        >
+          <LogOut size={18} />
+          <span className="text-[10px] font-medium">Logout</span>
+        </button>
+      </nav>
 
       <style>{`
         @keyframes slideUp {

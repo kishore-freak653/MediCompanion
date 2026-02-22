@@ -73,51 +73,51 @@ export default function HistoryView({ userId }: Props) {
 
       {/* Statistics Cards */}
       {stats && (
-        <div className="grid grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl p-5 text-white">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+          <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl md:rounded-2xl p-4 md:p-5 text-white">
             <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="w-5 h-5 opacity-80" />
-              <span className="text-2xl font-bold">{stats.adherenceRate}%</span>
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 opacity-80" />
+              <span className="text-xl md:text-2xl font-bold">{stats.adherenceRate}%</span>
             </div>
-            <p className="text-xs opacity-90">Adherence Rate</p>
+            <p className="text-[10px] md:text-xs opacity-90">Adherence Rate</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-              <span className="text-2xl font-bold text-green-600">
+              <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-green-600" />
+              <span className="text-xl md:text-2xl font-bold text-green-600">
                 {stats.takenDays}
               </span>
             </div>
-            <p className="text-xs text-gray-500">Days Taken</p>
+            <p className="text-[10px] md:text-xs text-gray-500">Days Taken</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <XCircle className="w-5 h-5 text-red-500" />
-              <span className="text-2xl font-bold text-red-500">
+              <XCircle className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
+              <span className="text-xl md:text-2xl font-bold text-red-500">
                 {stats.missedDays}
               </span>
             </div>
-            <p className="text-xs text-gray-500">Days Missed</p>
+            <p className="text-[10px] md:text-xs text-gray-500">Days Missed</p>
           </div>
-          <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <Calendar className="w-5 h-5 text-teal-600" />
-              <span className="text-2xl font-bold text-teal-600">
+              <Calendar className="w-4 h-4 md:w-5 md:h-5 text-teal-600" />
+              <span className="text-xl md:text-2xl font-bold text-teal-600">
                 {stats.totalDays}
               </span>
             </div>
-            <p className="text-xs text-gray-500">Total Days</p>
+            <p className="text-[10px] md:text-xs text-gray-500">Total Days</p>
           </div>
         </div>
       )}
 
       {/* Weekly Chart */}
       {stats && stats.weeklyData.length > 0 && (
-        <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">
+        <div className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-100 shadow-sm overflow-x-auto">
+          <h3 className="text-xs md:text-sm font-semibold text-gray-700 mb-3 md:mb-4">
             Weekly Adherence
           </h3>
-          <div className="flex items-end gap-2 h-32">
+          <div className="flex items-end gap-1 md:gap-2 h-24 md:h-32 min-w-max md:min-w-0">
             {stats.weeklyData.map((week, idx) => {
               const percentage =
                 week.total > 0 ? (week.taken / week.total) * 100 : 0;

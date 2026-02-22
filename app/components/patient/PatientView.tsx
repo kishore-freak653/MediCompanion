@@ -130,11 +130,11 @@ function PatientView({ medications, userId }: PatientViewProps) {
       )}
 
       {/* Hero Progress Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-700 p-6 text-white shadow-lg">
-        <div className="absolute -top-8 -right-8 w-40 h-40 bg-white/10 rounded-full" />
-        <div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/10 rounded-full" />
-        <p className="text-sm font-medium opacity-80 mb-1">{getGreeting()}</p>
-        <p className="text-2xl font-bold mb-4">
+      <div className="relative overflow-hidden rounded-xl md:rounded-2xl bg-gradient-to-br from-teal-500 via-teal-600 to-emerald-700 p-4 md:p-6 text-white shadow-lg">
+        <div className="absolute -top-8 -right-8 w-40 h-40 bg-white/10 rounded-full hidden md:block" />
+        <div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/10 rounded-full hidden md:block" />
+        <p className="text-xs md:text-sm font-medium opacity-80 mb-1">{getGreeting()}</p>
+        <p className="text-lg md:text-2xl font-bold mb-3 md:mb-4">
           {takenCount === totalCount && totalCount > 0
             ? "All done for today! 🎉"
             : `${takenCount} of ${totalCount} medications taken`}
@@ -149,20 +149,20 @@ function PatientView({ medications, userId }: PatientViewProps) {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
-          <p className="text-2xl font-bold text-teal-600">{totalCount}</p>
-          <p className="text-xs text-gray-500 mt-1">Total</p>
+      <div className="grid grid-cols-3 gap-2 md:gap-3">
+        <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-sm border border-gray-100 text-center">
+          <p className="text-xl md:text-2xl font-bold text-teal-600">{totalCount}</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">Total</p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
-          <p className="text-2xl font-bold text-green-600">{takenCount}</p>
-          <p className="text-xs text-gray-500 mt-1">Taken</p>
+        <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-sm border border-gray-100 text-center">
+          <p className="text-xl md:text-2xl font-bold text-green-600">{takenCount}</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">Taken</p>
         </div>
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 text-center">
-          <p className="text-2xl font-bold text-orange-500">
+        <div className="bg-white rounded-lg md:rounded-xl p-3 md:p-4 shadow-sm border border-gray-100 text-center">
+          <p className="text-xl md:text-2xl font-bold text-orange-500">
             {totalCount - takenCount}
           </p>
-          <p className="text-xs text-gray-500 mt-1">Remaining</p>
+          <p className="text-[10px] md:text-xs text-gray-500 mt-0.5 md:mt-1">Remaining</p>
         </div>
       </div>
 
@@ -198,12 +198,12 @@ function PatientView({ medications, userId }: PatientViewProps) {
               return (
                 <div
                   key={med.id}
-                  className={`rounded-2xl shadow-sm border transition-all
+                  className={`rounded-xl md:rounded-2xl shadow-sm border transition-all
                     ${isTaken ? "bg-green-50 border-green-200" : "bg-white border-gray-100"}
                     ${isActive ? "border-teal-300 ring-2 ring-teal-100" : ""}`}
                 >
                   {/* Med info row */}
-                  <div className="px-5 py-4 flex justify-between items-center">
+                  <div className="px-4 md:px-5 py-3 md:py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-0">
                     <div className="flex items-center gap-4">
                       <div
                         className={`p-2 rounded-xl ${isTaken ? "bg-green-100" : "bg-teal-50"}`}
@@ -236,14 +236,14 @@ function PatientView({ medications, userId }: PatientViewProps) {
                     </div>
 
                     {isTaken ? (
-                      <div className="flex items-center gap-1.5 text-green-600 text-sm font-medium bg-green-100 px-3 py-1.5 rounded-full">
+                      <div className="flex items-center gap-1.5 text-green-600 text-xs md:text-sm font-medium bg-green-100 px-3 py-1.5 rounded-full w-full md:w-auto justify-center">
                         <CheckCircle className="w-4 h-4" />
                         Taken
                       </div>
                     ) : !isActive ? (
                       <button
                         onClick={() => setActiveMedId(med.id)}
-                        className="bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-sm px-4 py-2 rounded-xl transition-all font-medium shadow-sm"
+                        className="bg-teal-600 hover:bg-teal-700 active:scale-95 text-white text-sm px-4 py-2 rounded-xl transition-all font-medium shadow-sm w-full md:w-auto"
                       >
                         Mark Taken
                       </button>
@@ -252,7 +252,7 @@ function PatientView({ medications, userId }: PatientViewProps) {
 
                   {/* Photo Upload Panel */}
                   {isActive && !isTaken && (
-                    <div className="px-5 pb-5 border-t border-teal-100 pt-4">
+                    <div className="px-4 md:px-5 pb-4 md:pb-5 border-t border-teal-100 pt-3 md:pt-4">
                       <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-0.5">
                         Add Proof Photo{" "}
                         <span className="text-gray-300 font-normal normal-case">
