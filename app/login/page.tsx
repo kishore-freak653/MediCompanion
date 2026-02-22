@@ -108,7 +108,7 @@ if (!result.success) {
            name="email"
            value={formData.email}
            onChange={handleChange}
-           className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+           className="w-full border border-gray-200 text-black rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
            placeholder="you@example.com"
          />
          {errors.email && (
@@ -124,7 +124,7 @@ if (!result.success) {
            type="password"
            value={formData.password}
            onChange={handleChange}
-           className="w-full border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+           className="w-full border border-gray-200 text-black rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500  transition"
            placeholder="Enter your password"
          />
          {errors.password && (
@@ -142,7 +142,10 @@ if (!result.success) {
        </button>
 
        {/* Footer */}
-       <p className="text-xs text-teal-600 text-center mt-6 underline cursor-pointer" onClick={() => router.push("/signup")}>
+       <p
+         className="text-xs text-teal-600 text-center mt-6 underline cursor-pointer"
+         onClick={() => router.push("/signup")}
+       >
          Don't have an account ? signup here
        </p>
      </div>
