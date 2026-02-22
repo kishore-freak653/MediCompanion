@@ -55,7 +55,7 @@ export default function LoginPage() {
 
     if (!result.success) {
       const fieldErrors: Partial<LoginFormData> = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         const field = err.path[0] as keyof LoginFormData;
         fieldErrors[field] = err.message;
       });
