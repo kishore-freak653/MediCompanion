@@ -70,6 +70,8 @@ if (!result.success) {
         password: formData.password,
       });
 
+      console.log(formData);
+
       if (error) throw error;
 
       toast.success("Login successful");

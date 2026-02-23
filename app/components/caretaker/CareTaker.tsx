@@ -13,6 +13,8 @@ import {
   Edit2,
   Save,
   X,
+  Mail,
+  Bell,
 } from "lucide-react";
 import { Medication } from "@/app/types/medication";
 import MedicationForm from "../medications/MedicationForm";
@@ -32,11 +34,21 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
+interface EmailAlert {
+  id: string;
+  medName: string;
+  time: string;
+  sentAt: string;
+}
+
 const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [missedAlerts, setMissedAlerts] = useState<string[]>([]);
   const [takenIds, setTakenIds] = useState<string[]>([]);
-  const [logsLoaded, setLogsLoaded] = useState(false);
+  const [emailAlerts, setEmailAlerts] = useState<EmailAlert[]>([]);
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(
+    new Set(),
+  );
   const [editingNotesId, setEditingNotesId] = useState<string | null>(null);
   const [notesValue, setNotesValue] = useState<string>("");
 
@@ -58,7 +70,29 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
           med.deadline_time.slice(0, 5) < now && !takenIds.includes(med.id),
       );
       setMissedAlerts(missed.map((m) => m.name));
+
+      // Generate fake email alerts for newly missed meds
+      missed.forEach((med) => {
+        setEmailAlerts((prev) => {
+          const alreadyExists = prev.some((a) => a.id === med.id);
+          if (alreadyExists) return prev;
+          const now = new Date();
+          return [
+            ...prev,
+            {
+              id: med.id,
+              medName: med.name,
+              time: med.deadline_time,
+              sentAt: now.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+          ];
+        });
+      });
     };
+
     checkMissed();
     const interval = setInterval(checkMissed, 60000);
     return () => clearInterval(interval);
@@ -87,6 +121,14 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
     setNotesValue("");
   };
 
+  const dismissAlert = (id: string) => {
+    setDismissedAlerts((prev) => new Set([...prev, id]));
+  };
+
+  const visibleEmailAlerts = emailAlerts.filter(
+    (a) => !dismissedAlerts.has(a.id),
+  );
+
   const now = new Date().toTimeString().slice(0, 5);
   const takenCount = takenIds.filter((id) =>
     medications.some((m) => m.id === id),
@@ -112,23 +154,69 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
 
   return (
     <>
-      {/* ── Missed Alert Banner ── */}
-      {missedAlerts.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-5 flex items-start gap-3">
-          <div className="bg-red-100 p-2 rounded-xl flex-shrink-0">
-            <AlertTriangle className="text-red-500 w-4 h-4" />
-          </div>
-          <div>
-            <p className="font-semibold text-red-700 text-sm">
-              Missed Medication Alert
+      {/* ── Fake Email Alert Cards ── */}
+      {visibleEmailAlerts.length > 0 && (
+        <div className="flex flex-col gap-2 mb-5">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-1">
+            <Bell className="w-4 h-4 text-red-500" />
+            <p className="text-sm font-semibold text-red-600">
+              Email Notifications Sent
             </p>
-            <p className="text-red-400 text-xs mt-0.5">
-              Patient has not taken:{" "}
-              <strong className="text-red-600">
-                {missedAlerts.join(", ")}
-              </strong>
-            </p>
+            <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+              {visibleEmailAlerts.length}
+            </span>
           </div>
+
+          {visibleEmailAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className="bg-white border border-red-100 rounded-2xl p-4 shadow-sm flex items-start gap-3"
+            >
+              {/* Mail icon */}
+              <div className="bg-red-50 p-2.5 rounded-xl flex-shrink-0">
+                <Mail className="w-4 h-4 text-red-500" />
+              </div>
+
+              {/* Content — looks like an email card */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-xs font-bold text-red-700 uppercase tracking-wide">
+                    📧 Auto Email Sent
+                  </p>
+                  <span className="text-[10px] text-gray-400">
+                    · {alert.sentAt}
+                  </span>
+                </div>
+                <p className="text-sm font-semibold text-gray-800">
+                  Missed Medication:{" "}
+                  <span className="text-red-600">{alert.medName}</span>
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  To:{" "}
+                  <span className="font-medium text-gray-700">
+                    caretaker@email.com
+                  </span>
+                </p>
+                <div className="mt-2 p-2.5 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="text-xs text-gray-600 italic">
+                    "Hello, your patient has missed their{" "}
+                    <strong>{alert.medName}</strong> medication which was due at{" "}
+                    {formatTimeDisplay(alert.time, "")}. Please follow up with
+                    them."
+                  </p>
+                </div>
+              </div>
+
+              {/* Dismiss */}
+              <button
+                onClick={() => dismissAlert(alert.id)}
+                className="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
@@ -136,16 +224,28 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
       {medications.length > 0 && (
         <div className="grid grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-5">
           <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
-            <p className="text-xl md:text-2xl font-bold text-green-600">{takenCount}</p>
-            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Taken</p>
+            <p className="text-xl md:text-2xl font-bold text-green-600">
+              {takenCount}
+            </p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">
+              Taken
+            </p>
           </div>
           <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
-            <p className="text-xl md:text-2xl font-bold text-red-500">{missedCount}</p>
-            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Missed</p>
+            <p className="text-xl md:text-2xl font-bold text-red-500">
+              {missedCount}
+            </p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">
+              Missed
+            </p>
           </div>
           <div className="bg-white border border-gray-100 rounded-lg md:rounded-2xl p-3 md:p-4 text-center shadow-sm">
-            <p className="text-xl md:text-2xl font-bold text-amber-500">{pendingCount}</p>
-            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">Pending</p>
+            <p className="text-xl md:text-2xl font-bold text-amber-500">
+              {pendingCount}
+            </p>
+            <p className="text-[10px] md:text-xs text-gray-400 mt-0.5 md:mt-1">
+              Pending
+            </p>
           </div>
         </div>
       )}
@@ -224,7 +324,6 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
                         {formatTimeDisplay(med.deadline_time, "Deadline:")}
                       </p>
                     </div>
-                    {/* ✅ Notes display/edit */}
                     {editingNotesId === med.id ? (
                       <div className="mt-2">
                         <textarea
@@ -240,15 +339,13 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
                             onClick={() => handleSaveNotes(med.id)}
                             className="flex items-center gap-1 px-2 py-1 bg-teal-600 text-white text-xs rounded hover:bg-teal-700 transition-colors"
                           >
-                            <Save className="w-3 h-3" />
-                            Save
+                            <Save className="w-3 h-3" /> Save
                           </button>
                           <button
                             onClick={handleCancelEdit}
                             className="flex items-center gap-1 px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 transition-colors"
                           >
-                            <X className="w-3 h-3" />
-                            Cancel
+                            <X className="w-3 h-3" /> Cancel
                           </button>
                         </div>
                       </div>
@@ -260,7 +357,9 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
                               <p className="text-xs text-blue-800 font-medium mb-1">
                                 📝 Note:
                               </p>
-                              <p className="text-xs text-blue-700">{med.notes}</p>
+                              <p className="text-xs text-blue-700">
+                                {med.notes}
+                              </p>
                             </div>
                             <button
                               onClick={() => handleEditNotes(med)}
@@ -277,8 +376,7 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
                         onClick={() => handleEditNotes(med)}
                         className="mt-2 flex items-center gap-1 text-xs text-gray-500 hover:text-teal-600 transition-colors"
                       >
-                        <Edit2 className="w-3 h-3" />
-                        Add note
+                        <Edit2 className="w-3 h-3" /> Add note
                       </button>
                     )}
                   </div>
@@ -287,21 +385,17 @@ const CareTaker = ({ medications, loading, onRefresh, onDelete }: Props) => {
                 <div className="flex items-center gap-2">
                   {isTaken ? (
                     <div className="flex items-center gap-1.5 text-green-600 text-xs font-semibold bg-green-100 px-3 py-1.5 rounded-full">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Taken
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Taken
                     </div>
                   ) : isPastDeadline ? (
                     <div className="flex items-center gap-1.5 text-red-500 text-xs font-semibold bg-red-100 px-3 py-1.5 rounded-full">
-                      <XCircle className="w-3.5 h-3.5" />
-                      Missed
+                      <XCircle className="w-3.5 h-3.5" /> Missed
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 text-amber-600 text-xs font-semibold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100">
-                      <Timer className="w-3.5 h-3.5" />
-                      Pending
+                      <Timer className="w-3.5 h-3.5" /> Pending
                     </div>
                   )}
-
                   <button
                     onClick={() => onDelete(med.id)}
                     className="p-2 hover:bg-red-50 rounded-xl text-gray-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
